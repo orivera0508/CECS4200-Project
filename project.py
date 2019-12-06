@@ -43,3 +43,21 @@ elif badVar(user_input) is True:
 # ##########################################################
 
 # Now we determine sentences:
+
+def getCommands(variable):
+    result =  re.findall(r'''([^\s]+)''',variable)
+    
+    #return len(result)
+    return result
+
+#print("Words: " + str(getCommands(user_input)))
+
+commands = getCommands(user_input)
+
+#Determining which commands are variables:
+
+for i in range(len(commands)):
+    if badVar(commands[i]) is False:
+        print(commands[i] + " is good")
+    else:
+        print(commands[i] + " is bad")
