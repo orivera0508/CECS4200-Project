@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Jan 14 09:57:40 2020
-
 @author: Orlando J. Rivera Guevara
-@description: Test Environment to identify tokens:
+@description: LAO Interpreter:
 """
 #Modules used:
 import re
@@ -11,10 +10,8 @@ import re
 #Initializing error_warning
 error_warning = ""
 
-print("PHASE 1: IDENTIFY TOKENS\n\n")
-
 #Getting User Input:
-user_input = input("CommandLine>")
+user_input = input("\nCommandLine>")
 
 user_input = user_input.upper()
 
@@ -29,9 +26,15 @@ def isString(token):
         return True
     else:
         return False
-   
+def isComment(token):
+    if token == "REM":
+        return True
+    else:
+        return False
+
+ 
 def isKeyWord(token):
-    if token == "print" or token == "PRINT" or token == "rem" or token == "REM" or token == "if" or token == "IF" or token == "else" or token == "ELSE" or token == "end." or token == "END." or token == "THEN" or token == "then":
+    if token == "PRINT" or token == "IF" or token == "ELSE" or token == "END." or token == "THEN":
         return True
     else:
         return False
@@ -62,7 +65,7 @@ def isArithmeticOperator(token):
         return False
    
 def isLogicalOperator(token):
-    if token == ".or." or token == ".OR." or token == ".and." or token == ".AND." or token == ".not." or token == ".AND." or token == ".eq." or token == ".EQ." or token == ".ne." or token == ".NE." or token == ".lt." or token == ".LT." or token == ".le." or token == ".LE." or token == ".gt." or token == ".GT." or token == ".ge." or token == ".GE.":
+    if token == ".OR."or token == ".AND." or token == ".AND." or token == ".EQ." or token == ".NE." or token == ".LT." or token == ".LE." or token == ".GT." or token == ".GE.":
         return True
     else:
         return False
@@ -80,138 +83,77 @@ def isFloat(token):
     else:
         return True
 def isAssignmentOperator(token):
-	if token == r"=":
-		return True
-	else:
-		return False
-
-'''
-for token in tokens:
-    if isString(token) is True:
-        print("Token is a valid string: " + token)
-    elif identifyKeyWords(token) is True:
-        print("Token is a Keyword: " + token)
-    elif isInt(token) is True:
-        print("Token is an Unsigned Int: " + token)
-    elif isFloat(token) is True:
-        print("Token is a real: " + token)
-    elif isArithmeticOperator(token) is True:
-        print("Token is an Arithmetic Operator: " + token)
-    elif isLogicalOperator(token) is True:
-        print("Token is an Logical Operator: " + token)
-    elif isValidIdentifier(token) is True:
-        #A-F: int, G-N: real, O-Z: string
-        if re.search(r'^[A-Fa-f].*$', token):
-            print("Token is a Valid Identifier (int): " + token)
-        elif re.search(r'^[G-Ng-n].*$', token):
-            print("Token is a Valid Identifier (real): " + token)
-        elif re.search(r'^[O-Zo-z].*$', token):
-            print("Token is a Valid Identifier (string): " + token)
+    if token == r"=":
+        return True
     else:
-        if error_warning is None:
-            print("Unexpected Error: Cannot Identify this Token: " + token)
+        return False
+
+#Loops through token list to validate tokens:
+def isTokenErrorFree(list):
+    
+    for token in tokens:
+        if isArithmeticOperator(token):
+            next
+        elif isAssignmentOperator(token):
+            next
+        elif isInt(token):
+            next
+        elif isValidIdentifier(token):
+            next
+        elif isString(token):
+            next
+        elif isKeyWord(token):
+            next
+        elif isLogicalOperator(token):
+            next
+        elif isFloat(token):
+            next
         else:
-            print(error_warning)
-'''
+            input("ERROR Unidentified Token: " + token)
+            exit()
+    return True
+
 ###############################################################################
 #                           Step 2: Analyze
 ###############################################################################
 
-def ifCompatible(list):
-    #Testing token validity:
-    for j in range(len(list)):
-            if isString(list[j]) is True or isKeyWord(list[j]) is True or isValidIdentifier(list[j]) is True or isArithmeticOperator(list[j]) is True or isLogicalOperator(list[j]) is True or isInt(list[j]) is True or isFloat(list[j]) is True:
-                next
-            else:
-                print("ERROR: Invalid token: " + list[j])
-                input("PROGRAM EXITED WITH ERROR CODE: " + str(0) + "\nPRESS ANY KEY TO CONTINUE")
-                exit()
-   
-    #Sequences that will work:
+#Defining if tokens are compatible:
+
+#What makes a token compatible?
+#Certain tokens can be next to each other and execute but other tokens cannot
+#Start by going over all the errors and documenting them.
+
+#Error 1: Incompatible Print Statement
+'''
+Print statement cannot be followed by:
+- A keyword
+- An arithmetic
+- A Logical operator
+- An assignment operator
+'''
+
+def isSentenceErrorFree(list):
+    
     for i in range(len(list)):
-
-        #Testing if expressions are valid:
-        if isKeyWord(list[i]) is True:
-            if list[0] == "REM":
-                print("Valid REM Statement: " , end = "")
-                print(*list)
-                return True
-                break
-            elif list[i] == "PRINT":
-                if isKeyWord(list[i + 1]) is True or isArithmeticOperator(list[i + 1]) is True or isLogicalOperator(list[i + 1]) is True or isAssignmentOperator(list[i + 1]) is True:
-                    print("INVALID PRINT STATEMENT: ", end = "")
-                    print(*list)
-                    input("PROGRAM EXITED WITH ERROR CODE: " + str(1) + "\nPRESS ANY KEY TO CONTINUE")
-                    exit()
-                elif isInt(list[i + 1]) is True or isFloat(list[i + 1]) is True or isValidIdentifier(list[i + 1]) is True or isString(list[i + 1]) is True:
-                    #print("VALID PRINT STATEMENT: ", end = "")
-                    #print(*list)
-                    next
-            elif list[i] == "IF":
-                if isKeyWord(list[i + 1]) is True or isArithmeticOperator(list[i + 1]) is True or isLogicalOperator(list[i + 1]) is True or isAssignmentOperator(list[i + 1]) is True:
-                    print("INVALID IF STATEMENT: ", end = "")
-                    print(*list)
-                    input("PROGRAM EXITED WITH ERROR CODE: " + str(2) + "\nPRESS ANY KEY TO CONTINUE")
-                    exit()
-                if isInt(list[i + 1]) is True or isFloat(list[i + 1]) is True or isValidIdentifier(list[i + 1]) is True or isString(list[i + 1]) is True:
-                    #print("VALID PRINT STATEMENT: ", end = "")
-                    #print(*list)
-                    next
-            elif list[i] == "THEN":
-                if isKeyWord(list[i + 1]) is True or isArithmeticOperator(list[i + 1]) is True or isLogicalOperator(list[i + 1]) is True or isAssignmentOperator(list[i + 1]) is True:
-                    print("INVALID THEN STATEMENT: ", end = "")
-                    print(*list)
-                    input("PROGRAM EXITED WITH ERROR CODE: " + str(3) + "\nPRESS ANY KEY TO CONTINUE")
-                    exit()
-                if isInt(list[i + 1]) is True or isFloat(list[i + 1]) is True or isValidIdentifier(list[i + 1]) is True or isString(list[i + 1]) is True:
-                    #print("VALID PRINT STATEMENT: ", end = "")
-                    #print(*list)
-                    next
-            elif list[i] == "END.":
-                if isKeyWord(list [i + 1]) is True or isArithmeticOperator(list[i + 1]) is True or isLogicalOperator(list[i + 1]) is True or isAssignmentOperator(list[i + 1]) is True or isInt(list[i + 1]) is True or isFloat(list[i + 1]) is True or isValidIdentifier(list[i + 1]) is True or isString(list[i + 1]) is True:
-                    print("INVALID END. STATEMENT: ", end = "")
-                    print(*list)
-                    input("PROGRAM EXITED WITH ERROR CODE: " + str(4) + "\nPRESS ANY KEY TO CONTINUE")
-                    exit()
-                   
-        if isString(list[i]) is True:
-            if isAssignmentOperator(list[i - 1]) is False or (isKeyWord(list[i - 1]) is False and (list[i - 1] != "PRINT" or list[i - 1] != "REM")):
-                 print("INVALID STATEMENT, STRING AT BEGGINING OF CODE: ", end = "")
-                 print(*list)
-                 input("PROGRAM EXITED WITH ERROR CODE: " + str(5) + "\nPRESS ANY KEY TO CONTINUE")
-                 exit()
-            elif isKeyWord(list[i + 1]) is True or isArithmeticOperator(list[i + 1]) is True or isLogicalOperator(list[i + 1]) is True or isAssignmentOperator(list[i + 1]) or True or isInt(list[i + 1]) is True or isFloat(list[i + 1]) is True or isValidIdentifier(list[i + 1]) is True or isString(list[i + 1]) is True:
-                next
-		
-		if isValidIdentifier(list[i]) is True:
-			if isValidIdentifier(list[i + 1]) is True or isValidIdentifier(list[i - 1]) is True or isString(list[i + 1]) is True or isString(list[i - 1]) is True:
-				print("INVALID STATEMENT, VARIABLE AMBIGUITY: ", end = "")
-				print(*list)
-				input("PROGRAM EXITED WITH ERROR CODE: " + str(6) + "\nPRESS ANY KEY TO CONTINUE")
-				exit()
-				
-ifCompatible(tokens)
-
+        
+        if i > 0:
+            if isKeyWord(list[i - 1]) is True and (isKeyWord(list[i]) is True or isAssignmentOperator(list[i]) is True or isArithmeticOperator(list[i]) is True or isLogicalOperator(tokens[i]) is True):
+                input("Error, Keyword out of place")
+                exit()
+            elif isArithmeticOperator(list[i - 1]) is True and (isKeyWord(list[i]) is True or isAssignmentOperator(list[i]) is True or isArithmeticOperator(list[i]) is True or isLogicalOperator(list[i]) is True):
+                input("Error, Arithmetic Operator out of place")
+                exit()
+            elif isLogicalOperator(list[i - 1]) is True and (isKeyWord(list[i]) is True or isAssignmentOperator(list[i]) is True or isArithmeticOperator(list[i]) is True or isLogicalOperator(list[i]) is True):
+                input("Error, Logical Operator out of place")
+                exit()
+            elif isAssignmentOperator(list[i - 1]) is True and (isKeyWord(list[i]) is True or isAssignmentOperator(list[i]) is True or isArithmeticOperator(list[i]) is True or isLogicalOperator(list[i]) is True):
+                input("Error, Amssignment Operator out of place")
+                exit()
+    return True
 
 ###############################################################################
 #                           Step 3: Execute
 ###############################################################################
-'''
-def lexicalAnalysis(list):
-    #print(list)
-   
-    for i in range(len(list)):
-    #Things that will prompt an error during lexical analysis:
-        if isArithmeticOperator(list[0]) is True or isLogicalOperator(list[0]) is True:
-            print(list[0])
-            print("ERROR: Invalid Syntax")
-            break
-     #This is my print statement:
-        elif identifyKeyWords(list[i]) is True and list[i] == "print" and '"' in list[i + 1]:
-            sentence = ""
-            for i in list[i + 1:]:
-                sentence =sentence + i.replace('"', '') + " "
-            print (sentence)
-
-lexicalAnalysis(tokens)
-'''
+if isTokenErrorFree(tokens) is True and isSentenceErrorFree(tokens) is True:
+    commands = open("commands.txt", "w")
+execute(commands.txt)
